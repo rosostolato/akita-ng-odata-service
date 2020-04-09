@@ -5,9 +5,12 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:lib": "ng build akita-ng-odata-service",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "publish": "cd ./dist/akita-ng-odata-service && npm publish",
+    "release": "npm run build:lib && npm run publish"
   },
   "private": true,
   "dependencies": {
