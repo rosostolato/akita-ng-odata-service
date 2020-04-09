@@ -1,0 +1,27 @@
+{
+  "name": "akita-ng-odata-service",
+  "version": "1.0.0",
+  "peerDependencies": {
+    "@angular/common": "^7.0.0",
+    "@angular/core": "^7.0.0",
+    "@datorama/akita": "^4.1.0",
+    "@datorama/akita-ng-entity-service": "^2.0.0",
+    "odata-fluent-query": "^1.1.2",
+    "rxjs": "~6.4.0"
+  },
+  "author": "GrandSchtroumpf",
+  "description": "A service to connect Akita and Angular Firestore",
+  "keywords": [
+    "akita",
+    "firebase",
+    "angular"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rosostolato/akita-ng-odata-service"
+  },
+  "bugs": {
+    "url": "https://github.com/rosostolato/akita-ng-odata-service/issues"
+  }
+}
