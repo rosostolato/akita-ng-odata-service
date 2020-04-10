@@ -63,7 +63,7 @@ export class PostsService extends ODataEntityService<PostsState> {
 
 ## OData query
 
-The biggest benefit of OData is to perform a custom query to you data. So in partship with [odata-fluent-query](https://github.com/rosostolato/odata-fluent-query), all methods in `ODataEntityService` have a query parameter to be optionally passed via config object. Here is an example:
+The biggest benefit of OData is to perform a custom query to your data. So in partship with [odata-fluent-query](https://github.com/rosostolato/odata-fluent-query), all methods in `ODataEntityService` have a query parameter to be optionally passed via config object. Here is an example:
 
 ```ts
 import { ODataQuery } from 'odata-fluent-query';
@@ -75,7 +75,7 @@ import { ODataQuery } from 'odata-fluent-query';
 export class PostsPageComponent {
   /**
    * it will have data filtered by title and
-   * selected only title and body
+   * only title and body will be fetched
    */
   posts$ = this.postsQuery.selectAll();
 
@@ -101,7 +101,7 @@ For futher informations, please visit [odata-fluent-query](https://github.com/ro
 
 In OData, actions and functions are a way to add server-side behaviors that are not easily defined as CRUD operations on entities. `ODataEntityService` exposes `function` and `action` methods to be customized by your service.
 
-If you configured correctly functions and actions on your backend, you will have something like this:
+If you configured correctly functions and actions on your backend, you will be able to implement custom calls on your service:
 
 ```ts
 import { Injectable } from '@angular/core';
