@@ -4,7 +4,7 @@ Akita ❤️ Angular 📄 OData
 # Akita OData
 Extend codes to work with `Ng Entity Service` and `OData`.
 
-To work with OData we need a different approch from `Ng Entity Service` implementation. For example, if you want to get one single `Post` object of `id` 5, you need to get:
+To work with OData we need a different approach from `Ng Entity Service` implementation. For example, if you want to get one single `Post` object of `id` 5, you need to get:
 
 `GET /Posts(1)` instead of `GET /Posts/1`
 
