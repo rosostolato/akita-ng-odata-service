@@ -1,17 +1,17 @@
 import { EntityState, getEntityType, AddEntitiesOptions, getIDType, isDefined } from '@datorama/akita';
 import { NgEntityService, HttpConfig, Msg, isID, HttpMethod } from '@datorama/akita-ng-entity-service';
-import { map, tap } from 'rxjs/operators';
 import { HttpParams } from '@angular/common/http';
 import { ODataQuery } from 'odata-fluent-query';
 import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+
+import { isODataCollection } from '../utils/odata-utils';
 
 import {
   ODataSingleResult,
   ODataCollectionResult,
   ODataActionConfig
 } from '../utils/types';
-
-import { isODataCollection } from '../utils/odata-utils';
 
 export type ODataEntityConfig<T> = HttpConfig & {
   append?: boolean;
@@ -20,7 +20,6 @@ export type ODataEntityConfig<T> = HttpConfig & {
   query?: ODataQuery<T>;
 };
 
-// @ts-ignore
 export class ODataEntityService<S extends EntityState> extends NgEntityService<S> {
   /**
    *
@@ -237,7 +236,7 @@ export class ODataEntityService<S extends EntityState> extends NgEntityService<S
     );
   }
 
-  private mapOdataResponse<T>(res: ODataCollectionResult<T>|ODataSingleResult<T>) {
+  protected mapOdataResponse<T>(res: ODataCollectionResult<T>|ODataSingleResult<T>) {
     if (!res) {
       return res;
     }
@@ -250,10 +249,6 @@ export class ODataEntityService<S extends EntityState> extends NgEntityService<S
     }
   }
 
-  private get httpMethods(): { [K in HttpMethod]: K }  {
-    return this['mergedConfig'].httpMethods;
-  }
-
   protected resolveUrl(config?: HttpConfig, id?: any) {
     const customUrl = (config || {}).url;
 
@@ -262,5 +257,9 @@ export class ODataEntityService<S extends EntityState> extends NgEntityService<S
     }
 
     return customUrl || this.api;
+  }
+
+  protected get httpMethods(): { [K in HttpMethod]: K }  {
+    return this['mergedConfig'].httpMethods;
   }
 }
