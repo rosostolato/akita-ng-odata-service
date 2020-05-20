@@ -1,7 +1,10 @@
+# akita-ng-odata-service
+Akita ❤️ Angular 📄 OData
+
 # Akita OData
 Extend codes to work with `Ng Entity Service` and `OData`.
 
-To work with OData we need a different approch from `Ng Entity Service` implementation. For example, if you want to get one single `Post` object of `id` 5, you need to get:
+To work with OData we need a different approach from `Ng Entity Service` implementation. For example, if you want to get one single `Post` object of `id` 5, you need to get:
 
 `GET /Posts(1)` instead of `GET /Posts/1`
 
@@ -60,7 +63,7 @@ export class PostsService extends ODataEntityService<PostsState> {
 
 ## OData query
 
-The biggest benefit of OData is to perform a custom query to you data. So in partship with [odata-fluent-query](https://github.com/rosostolato/odata-fluent-query), all methods in `ODataEntityService` have a query parameter to be optionally passed via config object. Here is an example:
+The biggest benefit of OData is to perform a custom query to your data. So in partship with [odata-fluent-query](https://github.com/rosostolato/odata-fluent-query), all methods in `ODataEntityService` have a query parameter to be optionally passed via config object. Here is an example:
 
 ```ts
 import { ODataQuery } from 'odata-fluent-query';
@@ -72,7 +75,7 @@ import { ODataQuery } from 'odata-fluent-query';
 export class PostsPageComponent {
   /**
    * it will have data filtered by title and
-   * selected only title and body
+   * only title and body will be fetched
    */
   posts$ = this.postsQuery.selectAll();
 
@@ -91,14 +94,14 @@ export class PostsPageComponent {
 }
 ```
 
-For futher informations, please visit [odata-fluent-query](https://github.com/rosostolato/odata-fluent-query) github page.
+For further informations, please visit [odata-fluent-query](https://github.com/rosostolato/odata-fluent-query) github page.
 
 
 ## Functions and Actions
 
 In OData, actions and functions are a way to add server-side behaviors that are not easily defined as CRUD operations on entities. `ODataEntityService` exposes `function` and `action` methods to be customized by your service.
 
-If you configured correctly functions and actions on your backend, you will have something like this:
+If you configured correctly functions and actions on your backend, you will be able to implement custom calls on your service:
 
 ```ts
 import { Injectable } from '@angular/core';

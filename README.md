@@ -94,7 +94,7 @@ export class PostsPageComponent {
 }
 ```
 
-For futher informations, please visit [odata-fluent-query](https://github.com/rosostolato/odata-fluent-query) github page.
+For further informations, please visit [odata-fluent-query](https://github.com/rosostolato/odata-fluent-query) github page.
 
 
 ## Functions and Actions
