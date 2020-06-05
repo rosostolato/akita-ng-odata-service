@@ -1,5 +1,5 @@
-import { ODataQuery } from 'odata-fluent-query';
 import { EntityStore } from '@datorama/akita';
+import { ODataQuery } from 'odata-fluent-query';
 
 export interface ODataCollectionResult<T> {
   '@odata.context': string;

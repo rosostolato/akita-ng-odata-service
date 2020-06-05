@@ -1,10 +1,11 @@
-import { EntityState, getEntityType, AddEntitiesOptions, getIDType, isDefined } from '@datorama/akita';
+import { getEntityType, AddEntitiesOptions, getIDType, isDefined } from '@datorama/akita';
 import { NgEntityService, HttpConfig, Msg, isID, HttpMethod } from '@datorama/akita-ng-entity-service';
 import { HttpParams } from '@angular/common/http';
 import { ODataQuery } from 'odata-fluent-query';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
+import { ODataEntityState } from '../odata-entity-state/odata-entity-state';
 import { isODataCollection } from '../utils/odata-utils';
 
 import {
@@ -20,7 +21,7 @@ export type ODataEntityConfig<T> = HttpConfig & {
   query?: ODataQuery<T>;
 };
 
-export class ODataEntityService<S extends EntityState> extends NgEntityService<S> {
+export class ODataEntityService<S extends ODataEntityState> extends NgEntityService<S> {
   /**
    *
    * Get all or one entity - Creates a GET request
@@ -34,18 +35,21 @@ export class ODataEntityService<S extends EntityState> extends NgEntityService<S
    */
   get<T = getEntityType<S>>(config?: ODataEntityConfig<T>): Observable<T[]>;
   get<T = getEntityType<S>>(id?: getEntityType<S>['id'], config?: ODataEntityConfig<T>): Observable<T>;
-  get<T = getEntityType<S>>(idOrConfig?: getEntityType<S>['id'] | HttpConfig, config?: ODataEntityConfig<T>): Observable<T|T[]> {
+  get<T = getEntityType<S>>(idOrConfig?: getEntityType<S>['id'] | HttpConfig, config?: ODataEntityConfig<T>): Observable<T | T[]> {
     const isSingle = isID(idOrConfig);
+
     config = (isSingle ? config : idOrConfig) || {} as ODataEntityConfig<T>;
 
-    if (isSingle) {
-      config.mapResponseFn = config.mapResponseFn || ((res: ODataSingleResult<T>) => {
-        delete res['@odata.context'];
-        return res;
-      });
-    } else {
-      config.mapResponseFn = config.mapResponseFn || ((res: ODataCollectionResult<T>) => res.value);
-    }
+    // if (isSingle) {
+    //   config.mapResponseFn = config.mapResponseFn || ((res: ODataSingleResult<T>) => {
+    //     delete res['@odata.context'];
+    //     return res;
+    //   });
+    // } else {
+    //   config.mapResponseFn = config.mapResponseFn || ((res: ODataCollectionResult<T>) => res.value);
+    // }
+
+    config.mapResponseFn = config.mapResponseFn || this.mapOdataResponse;
 
     if (!config.url) {
       config.url = isSingle ? `${this.api}(${idOrConfig})` : this.api;
@@ -77,10 +81,12 @@ export class ODataEntityService<S extends EntityState> extends NgEntityService<S
   ): Observable<T> {
     config = config || {};
 
-    config.mapResponseFn = config.mapResponseFn || ((res: ODataSingleResult<T>) => {
-      delete res['@odata.context'];
-      return res;
-    });
+    // config.mapResponseFn = config.mapResponseFn || ((res: ODataSingleResult<T>) => {
+    //   delete res['@odata.context'];
+    //   return res;
+    // });
+
+    config.mapResponseFn = config.mapResponseFn || this.mapOdataResponse;
 
     if (config.query) {
       config.params = config.query.toObject();
@@ -131,8 +137,8 @@ export class ODataEntityService<S extends EntityState> extends NgEntityService<S
   function<T>(functionName: string, config: ODataActionConfig<T, S>): Observable<T>;
   function<T>(id: getEntityType<S>['id'], functionName: string, config: ODataActionConfig<T, S>): Observable<T>;
   function<T>(
-    idOrFunc: getEntityType<S>['id']|string,
-    actionOrConfig: string|ODataActionConfig<T, S>,
+    idOrFunc: getEntityType<S>['id'] | string,
+    actionOrConfig: string | ODataActionConfig<T, S>,
     config?: ODataActionConfig<T, S>
   ): Observable<T> {
     const isSingle = typeof actionOrConfig === 'string';
@@ -186,8 +192,8 @@ export class ODataEntityService<S extends EntityState> extends NgEntityService<S
   action<T>(actionName: string, config: ODataActionConfig<T, S>): Observable<T>;
   action<T>(id: getEntityType<S>['id'], actionName: string, config: ODataActionConfig<T, S>): Observable<T>;
   action<T>(
-    idOrAction: getEntityType<S>['id']|string,
-    actionOrConfig: string|ODataActionConfig<T, S>,
+    idOrAction: getEntityType<S>['id'] | string,
+    actionOrConfig: string | ODataActionConfig<T, S>,
     config?: ODataActionConfig<T, S>
   ): Observable<T> {
     const isSingle = typeof actionOrConfig === 'string';
@@ -236,12 +242,16 @@ export class ODataEntityService<S extends EntityState> extends NgEntityService<S
     );
   }
 
-  protected mapOdataResponse<T>(res: ODataCollectionResult<T>|ODataSingleResult<T>) {
-    if (!res) {
-      return res;
-    }
+  protected mapOdataResponse<T>(res: ODataCollectionResult<T> | ODataSingleResult<T>) {
+    if (!res) return null;
 
     if (isODataCollection(res)) {
+      this.store.update(state => ({
+        ...state,
+        '@odata.context': res['@odata.context'] || state['@odata.context'],
+        '@odata.count': res['@odata.count'] || state['@odata.count'],
+      }));
+
       return res.value;
     } else {
       delete res['@odata.context'];
@@ -259,7 +269,7 @@ export class ODataEntityService<S extends EntityState> extends NgEntityService<S
     return customUrl || this.api;
   }
 
-  protected get httpMethods(): { [K in HttpMethod]: K }  {
+  protected get httpMethods(): { [K in HttpMethod]: K } {
     return this['mergedConfig'].httpMethods;
   }
 }
