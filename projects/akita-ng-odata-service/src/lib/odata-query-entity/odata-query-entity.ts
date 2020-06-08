@@ -6,23 +6,23 @@ export class ODataQueryEntity<S extends ODataEntityState, EntityType = getEntity
   /** get current state's `@odata.context` value */
   getODataContext() {
     const state = this.getValue();
-    return state['@odata.context'];
+    return state.context;
   }
 
   /** get current state's `@odata.count` value */
   getODataCount() {
     const state = this.getValue();
-    return state['@odata.count'];
+    return state.count;
   }
 
   /** select state's `@odata.context` value */
   selectODataContext() {
-    return this.select(s => s['@odata.context']);
+    return this.select(s => s.context);
   }
 
   /** select state's `@odata.count` value */
   selectODataCount() {
-    return this.select(s => s['@odata.count']);
+    return this.select(s => s.count);
   }
 
 }

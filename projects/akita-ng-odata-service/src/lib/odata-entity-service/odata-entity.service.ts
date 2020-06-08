@@ -1,11 +1,10 @@
-import { getEntityType, AddEntitiesOptions, getIDType, isDefined } from '@datorama/akita';
+import { getEntityType, AddEntitiesOptions, getIDType, isDefined, EntityState, logAction } from '@datorama/akita';
 import { NgEntityService, HttpConfig, Msg, isID, HttpMethod } from '@datorama/akita-ng-entity-service';
 import { HttpParams } from '@angular/common/http';
 import { ODataQuery } from 'odata-fluent-query';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
-import { ODataEntityState } from '../odata-entity-state/odata-entity-state';
 import { isODataCollection } from '../utils/odata-utils';
 
 import {
@@ -21,7 +20,7 @@ export type ODataEntityConfig<T> = HttpConfig & {
   query?: ODataQuery<T>;
 };
 
-export class ODataEntityService<S extends ODataEntityState> extends NgEntityService<S> {
+export class ODataEntityService<S extends EntityState> extends NgEntityService<S> {
   /**
    *
    * Get all or one entity - Creates a GET request
@@ -49,7 +48,7 @@ export class ODataEntityService<S extends ODataEntityState> extends NgEntityServ
     //   config.mapResponseFn = config.mapResponseFn || ((res: ODataCollectionResult<T>) => res.value);
     // }
 
-    config.mapResponseFn = config.mapResponseFn || this.mapOdataResponse;
+    config.mapResponseFn = config.mapResponseFn || this.mapOdataResponse.bind(this);
 
     if (!config.url) {
       config.url = isSingle ? `${this.api}(${idOrConfig})` : this.api;
@@ -86,7 +85,7 @@ export class ODataEntityService<S extends ODataEntityState> extends NgEntityServ
     //   return res;
     // });
 
-    config.mapResponseFn = config.mapResponseFn || this.mapOdataResponse;
+    config.mapResponseFn = config.mapResponseFn || this.mapOdataResponse.bind(this);
 
     if (config.query) {
       config.params = config.query.toObject();
@@ -134,6 +133,11 @@ export class ODataEntityService<S extends ODataEntityState> extends NgEntityServ
     return super.update(id, entity, config as any);
   }
 
+  /**
+   * call custom odata function
+   * @param functionName name of the odata function
+   * @param config config object that extends ODataActionConfig
+   */
   function<T>(functionName: string, config: ODataActionConfig<T, S>): Observable<T>;
   function<T>(id: getEntityType<S>['id'], functionName: string, config: ODataActionConfig<T, S>): Observable<T>;
   function<T>(
@@ -161,7 +165,7 @@ export class ODataEntityService<S extends ODataEntityState> extends NgEntityServ
           fromString: config.query && config.query.toString()
         })
       }).pipe(
-        map(this.mapOdataResponse),
+        map(this.mapOdataResponse.bind(this)),
         tap(res => config.storeUpdater && config.storeUpdater(this.store, res))
       );
     } else {
@@ -174,7 +178,7 @@ export class ODataEntityService<S extends ODataEntityState> extends NgEntityServ
           fromString: config.query && config.query.toString()
         })
       }).pipe(
-        map(this.mapOdataResponse),
+        map(this.mapOdataResponse.bind(this)),
         tap(res => config.storeUpdater && config.storeUpdater(this.store, res))
       );
     }
@@ -189,6 +193,11 @@ export class ODataEntityService<S extends ODataEntityState> extends NgEntityServ
     );
   }
 
+  /**
+   * call custom odata action
+   * @param actionName name of the odata action
+   * @param config config object that extends ODataActionConfig
+   */
   action<T>(actionName: string, config: ODataActionConfig<T, S>): Observable<T>;
   action<T>(id: getEntityType<S>['id'], actionName: string, config: ODataActionConfig<T, S>): Observable<T>;
   action<T>(
@@ -215,7 +224,7 @@ export class ODataEntityService<S extends ODataEntityState> extends NgEntityServ
           fromString: config.query && config.query.toString()
         })
       }).pipe(
-        map(this.mapOdataResponse),
+        map(this.mapOdataResponse.bind(this)),
         tap(res => config.storeUpdater && config.storeUpdater(this.store, res))
       );
     } else {
@@ -227,7 +236,7 @@ export class ODataEntityService<S extends ODataEntityState> extends NgEntityServ
           fromString: config.query && config.query.toString()
         })
       }).pipe(
-        map(this.mapOdataResponse),
+        map(this.mapOdataResponse.bind(this)),
         tap(res => config.storeUpdater && config.storeUpdater(this.store, res))
       );
     }
@@ -243,19 +252,33 @@ export class ODataEntityService<S extends ODataEntityState> extends NgEntityServ
   }
 
   protected mapOdataResponse<T>(res: ODataCollectionResult<T> | ODataSingleResult<T>) {
-    if (!res) return null;
+    if (!res) {
+      return null;
+    }
 
     if (isODataCollection(res)) {
-      this.store.update(state => ({
-        ...state,
-        '@odata.context': res['@odata.context'] || state['@odata.context'],
-        '@odata.count': res['@odata.count'] || state['@odata.count'],
-      }));
-
+      // update state with odata properties
+      this.updateOdataState(res);
       return res.value;
     } else {
       delete res['@odata.context'];
       return res as T;
+    }
+  }
+
+  protected updateOdataState<T>(res: ODataCollectionResult<T> | ODataSingleResult<T>) {
+    const curState = this.store.getValue();
+    const changed = res['@odata.context'] !== curState.context
+      || res['@odata.count'] && res['@odata.count'] !== curState.count;
+
+    if (changed) {
+      logAction('Set OData Properties');
+
+      this.store.update(state => ({
+        ...state,
+        context: res['@odata.context'] || state.context,
+        count: res['@odata.count'] || state.count,
+      }));
     }
   }
 
@@ -270,6 +293,7 @@ export class ODataEntityService<S extends ODataEntityState> extends NgEntityServ
   }
 
   protected get httpMethods(): { [K in HttpMethod]: K } {
+    // TODO: create PR for akita to make this property protected
     return this['mergedConfig'].httpMethods;
   }
 }

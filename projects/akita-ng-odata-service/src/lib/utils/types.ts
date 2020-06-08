@@ -10,6 +10,11 @@ export type ODataSingleResult<T> = T & {
   '@odata.context': string;
 };
 
+/**
+ * OData action config object
+ * T extends model used to query
+ * S extends store state model
+ */
 export interface ODataActionConfig<T, S> {
   url?: string;
   query?: ODataQuery<T extends (infer A)[] ? A : T>;
