@@ -21,6 +21,9 @@
     "type": "git",
     "url": "https://github.com/rosostolato/akita-ng-odata-service"
   },
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
   "bugs": {
     "url": "https://github.com/rosostolato/akita-ng-odata-service/issues"
   }
