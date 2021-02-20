@@ -167,6 +167,7 @@
   },
   "defaultProject": "akita-ng-odata-service-app",
   "cli": {
-    "analytics": "bfb24f8a-7706-4c79-b981-ab0e1971123d"
+    "analytics": "bfb24f8a-7706-4c79-b981-ab0e1971123d",
+    "defaultCollection": "@datorama/akita"
   }
 }
