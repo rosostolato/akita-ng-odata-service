@@ -1,8 +1,11 @@
 import { QueryEntity, getEntityType, getIDType } from '@datorama/akita';
 import { ODataEntityState } from '../odata-entity-state/odata-entity-state';
 
-export class ODataQueryEntity<S extends ODataEntityState, EntityType = getEntityType<S>, IDType = getIDType<S>>
-  extends QueryEntity<S, EntityType, IDType> {
+export class ODataQueryEntity<
+  S extends ODataEntityState,
+  EntityType = getEntityType<S>,
+  IDType = getIDType<S>
+> extends QueryEntity<S, EntityType, IDType> {
   /** get current state's `@odata.context` value */
   getODataContext() {
     const state = this.getValue();
@@ -17,12 +20,11 @@ export class ODataQueryEntity<S extends ODataEntityState, EntityType = getEntity
 
   /** select state's `@odata.context` value */
   selectODataContext() {
-    return this.select(s => s.context);
+    return this.select((s) => s.context);
   }
 
   /** select state's `@odata.count` value */
   selectODataCount() {
-    return this.select(s => s.count);
+    return this.select((s) => s.count);
   }
-
 }

@@ -63,7 +63,7 @@ export class PostsService extends ODataEntityService<PostsState> {
 
 ## OData query
 
-The biggest benefit of OData is to perform a custom query to your data. So in partship with [odata-fluent-query](https://github.com/rosostolato/odata-fluent-query), all methods in `ODataEntityService` have a query parameter to be optionally passed via config object. Here is an example:
+The biggest benefit of OData is to perform a custom query to your data. So in partnership with [odata-fluent-query](https://github.com/rosostolato/odata-fluent-query), all methods in `ODataEntityService` have a query parameter to be optionally passed via config object. Here is an example:
 
 ```ts
 import { ODataQuery } from 'odata-fluent-query';

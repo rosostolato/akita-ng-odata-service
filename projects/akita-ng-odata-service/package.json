@@ -1,12 +1,12 @@
 {
   "name": "akita-ng-odata-service",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "peerDependencies": {
     "@angular/common": "^7.0.0",
     "@angular/core": "^7.0.0",
     "@datorama/akita": "^4.1.0",
     "@datorama/akita-ng-entity-service": "^2.0.1",
-    "odata-fluent-query": "^1.1.2",
+    "odata-fluent-query": "^2.2.0",
     "rxjs": "~6.4.0"
   },
   "author": "rosostolato",
@@ -20,9 +20,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/rosostolato/akita-ng-odata-service"
-  },
-  "dependencies": {
-    "tslib": "^2.0.0"
   },
   "bugs": {
     "url": "https://github.com/rosostolato/akita-ng-odata-service/issues"

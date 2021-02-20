@@ -3,6 +3,7 @@ import { ODataQuery } from 'odata-fluent-query';
 
 export interface ODataCollectionResult<T> {
   '@odata.context': string;
+  '@odata.count'?: number;
   value: T[];
 }
 
