@@ -1,28 +1,28 @@
 import {
-  getEntityType,
   AddEntitiesOptions,
+  EntityState,
+  getEntityType,
   getIDType,
   isDefined,
-  EntityState,
   logAction,
 } from '@datorama/akita';
 import {
-  NgEntityService,
   HttpConfig,
-  Msg,
-  isID,
   HttpMethod,
+  Msg,
+  NgEntityService,
+  isID,
 } from '@datorama/akita-ng-entity-service';
+import { map, tap } from 'rxjs/operators';
 import { HttpParams } from '@angular/common/http';
 import { ODataQuery } from 'odata-fluent-query';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
 
 import { isODataCollection } from '../utils/odata-utils';
 import {
-  ODataSingleResult,
-  ODataCollectionResult,
   ODataActionConfig,
+  ODataCollectionResult,
+  ODataSingleResult,
 } from '../utils/types';
 
 export type ODataEntityConfig<T> = HttpConfig & {
@@ -68,7 +68,7 @@ export class ODataEntityService<
       conf.params = conf.query.toObject();
     }
 
-    return super.get((isSingle ? idOrConfig : config) as any, config);
+    return super.get((isSingle ? idOrConfig : conf) as any, conf);
   }
 
   /**
@@ -88,11 +88,6 @@ export class ODataEntityService<
       }
   ): Observable<T> {
     config = config || {};
-
-    // config.mapResponseFn = config.mapResponseFn || ((res: ODataSingleResult<T>) => {
-    //   delete res['@odata.context'];
-    //   return res;
-    // });
 
     config.mapResponseFn =
       config.mapResponseFn || this.mapOdataResponse.bind(this);
