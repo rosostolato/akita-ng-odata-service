@@ -1,5 +1,5 @@
-import { ODataCollectionResult } from './types';
 import { isArray } from '@datorama/akita';
+import { ODataCollectionResult } from './types';
 
 export function isODataCollection<T>(x: any): x is ODataCollectionResult<T> {
   const nonOdataKeys = Object.keys(x).filter(

@@ -1,4 +1,4 @@
-import { QueryEntity, getEntityType, getIDType } from '@datorama/akita';
+import { getEntityType, getIDType, QueryEntity } from '@datorama/akita';
 import { ODataEntityState } from '../odata-entity-state/odata-entity-state';
 
 export class ODataQueryEntity<

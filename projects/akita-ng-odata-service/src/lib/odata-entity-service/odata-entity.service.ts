@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import {
   AddEntitiesOptions,
   EntityState,
@@ -9,15 +10,13 @@ import {
 import {
   HttpConfig,
   HttpMethod,
+  isID,
   Msg,
   NgEntityService,
-  isID,
 } from '@datorama/akita-ng-entity-service';
-import { map, tap } from 'rxjs/operators';
-import { HttpParams } from '@angular/common/http';
 import { ODataQuery } from 'odata-fluent-query';
 import { Observable } from 'rxjs';
-
+import { map, tap } from 'rxjs/operators';
 import { isODataCollection } from '../utils/odata-utils';
 import {
   ODataActionConfig,
