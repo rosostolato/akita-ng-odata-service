@@ -1,6 +1,6 @@
 {
   "name": "akita-ng-odata-service",
-  "version": "7.0.0",
+  "version": "7.1.1",
   "peerDependencies": {
     "@angular/common": "^13.2.2",
     "@angular/core": "^13.2.2",
@@ -9,7 +9,10 @@
     "odata-fluent-query": "^2.4.0",
     "rxjs": "^6.5.0"
   },
-  "author": "rosostolato",
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "author": "Eduardo Rosostolato",
   "description": "A service to connect Akita and OData",
   "keywords": [
     "akita",
